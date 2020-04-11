@@ -69,7 +69,7 @@ select *,'dimension' tablename,'Dimesion in sync with Source' status from @dimen
 
 update @src_table  -- updating source table with values for title, last_name and record_date
 set 
-title = 'Ms',
+title = 'Mrs',
 last_name = 'Sen',record_date = getdate()
 where customer_id = 1
 
@@ -80,7 +80,7 @@ select *,'source' tablename,'Updated & Added Record in Source' status from @src_
 
 merge @dimension_table as dest using @src_table as src  -- rerunning the merge to check if latest changes are merged in dimension table
 ON (dest.customer_id = src.customer_id)
-WHEN MATCHED 
+WHEN MATCHED AND (dest.last_name <> src.last_name OR dest.title <> src.title)
 	THEN UPDATE SET
 	      dest.title = src.title,
 		  dest.first_name = src.first_name,
