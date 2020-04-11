@@ -14,7 +14,7 @@
 
 declare @record_date date = getdate()-10 --this variable marks a date 10 days ago 
 
-declare @dimesion_table table ( --a sample dimension table with customer attributes
+declare @dimension_table table ( --a sample dimension table with customer attributes
 customer_id int, --  key column
 title nvarchar(10), -- type 1 dimension
 first_name nvarchar(100),  
@@ -43,13 +43,13 @@ values
 
 select *,'source' tablename ,'Initializing Data in Source' status from @src_table
 
-select case when count(*) = 0 then 'Dimension Table is empty' END status from @dimesion_table
+select case when count(*) = 0 then 'Dimension Table is empty' END status from @dimension_table
 
 /*
 We have initialized the source table with sample data. We have also checked to see if the dimension table has any values.
 */
 
-merge @dimesion_table as dest using @src_table as src  --  Merging source table with dimension table
+merge @dimension_table as dest using @src_table as src  --  Merging source table with dimension table
 ON (dest.customer_id = src.customer_id)  -- matching the key columns
 WHEN MATCHED
 	THEN UPDATE SET  -- updating dimension table with following values if the customer_id keys match
@@ -65,7 +65,7 @@ WHEN NOT MATCHED   -- if the keys do not match, inserting the following values
 		 VALUES(src.customer_id,src.title,src.first_name,src.last_name,src.mobile,src.record_date,'9999-12-31','Y')
 ;		
 
-select *,'dimension' tablename,'Dimesion in sync with Source' status from @dimesion_table -- checking dimension table after merging with source table
+select *,'dimension' tablename,'Dimesion in sync with Source' status from @dimension_table -- checking dimension table after merging with source table
 
 update @src_table  -- updating source table with values for title, last_name and record_date
 set 
@@ -78,7 +78,7 @@ values (4,'Mr','Aditya','Sen',99020323,@record_date)
 
 select *,'source' tablename,'Updated & Added Record in Source' status from @src_table --displaying the updated source table
 
-merge @dimesion_table as dest using @src_table as src  -- rerunning the merge to check if latest changes are merged in dimension table
+merge @dimension_table as dest using @src_table as src  -- rerunning the merge to check if latest changes are merged in dimension table
 ON (dest.customer_id = src.customer_id)
 WHEN MATCHED 
 	THEN UPDATE SET
@@ -94,5 +94,5 @@ WHEN NOT MATCHED
 		 VALUES(src.customer_id,src.title,src.first_name,src.last_name,src.mobile,src.record_date,'9999-12-31','Y')
 ;		
 
-select *,'dimension' tablename,'Dimension in sync with Source again' status from @dimesion_table  -- checking if the dimension and source table are in sync
+select *,'dimension' tablename,'Dimension in sync with Source again' status from @dimension_table  -- checking if the dimension and source table are in sync
 
