@@ -18,3 +18,6 @@ The Output Clause returns the records affected by an INSERT, DELETE or UPDATE st
 
 The Output Clause with the MERGE command is used in conjunction with $action which returns status of the records affected 
 
+## [SCD Type 2](SCD_Type_2/SCD_Type_2_Using_Merge.sql)
+
+SQL Server ELT code for SCD Type 2 Merge
